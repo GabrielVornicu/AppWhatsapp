@@ -1,25 +1,29 @@
-exports.home = (req, res) => {
-  res.render("index", {
-    title: "Node.js CRM",
-    message: "Structură MVC activă 🚀"
-  });
-};
+const prisma = require("../config/prisma");
 
-exports.dashboard = (req, res) => {
-  res.render("index", {
-    title: "Dashboard",
-    message: "Aceasta este ruta /dashboard"
-  });
-};
-
-exports.contactPage = (req, res) => {
-  res.render("contact");
-};
-
-exports.contactSubmit = (req, res) => {
+exports.contactSubmit = async (req, res) => {
   const { name } = req.body;
 
-  console.log("Form submitted:", name);
+  try {
+    await prisma.contact.create({
+      data: { name }
+    });
 
-  res.redirect("/dashboard");
+    res.redirect("/dashboard");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("DB error");
+  }
+};
+
+exports.dashboard = async (req, res) => {
+  try {
+    const contacts = await prisma.contact.findMany({
+      orderBy: { createdAt: "desc" }
+    });
+
+    res.render("dashboard", { contacts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("DB error");
+  }
 };
