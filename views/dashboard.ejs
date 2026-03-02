@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Dashboard</h1>
+
+    <% if (!contacts || contacts.length === 0) { %>
+      <p>No contacts yet.</p>
+    <% } %>
+
+    <% if (contacts) { %>
+      <% contacts.forEach(c => { %>
+        <div class="card">
+          <strong><%= c.name %></strong>
+        </div>
+      <% }) %>
+    <% } %>
+
+    <br>
+    <a href="/contact">Back to contact</a>
+  </div>
+</body>
+</html>
