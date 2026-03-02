@@ -1,27 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dashboard</title>
-  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
   <div class="container">
-    <h1>Dashboard</h1>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+      <h1>Dashboard</h1>
 
-    <% if (!contacts || contacts.length === 0) { %>
-      <p>No contacts yet.</p>
-    <% } %>
+      <form method="POST" action="/logout">
+        <button type="submit">Logout</button>
+      </form>
+    </div>
 
-    <% if (contacts) { %>
-      <% contacts.forEach(c => { %>
-        <div class="card">
-          <strong><%= c.name %></strong>
-        </div>
-      <% }) %>
-    <% } %>
+    <p style="opacity:.9; margin-top: 0;">Logat ca: <b><%= user.email %></b></p>
 
-    <br>
-    <a href="/contact">Back to contact</a>
+    <div class="card" style="margin-top:16px;">
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btnLink" href="#" onclick="alert('Următorul pas: Add Marketplace UI'); return false;">➕ Adaugă marketplace</a>
+        <a class="btnLink" href="#list">📋 Marketplace-uri adăugate</a>
+      </div>
+    </div>
+
+    <div id="list" class="card" style="margin-top:16px;">
+      <h2 style="margin-top:0;">Marketplace-uri adăugate</h2>
+
+      <% if (!marketplaces.length) { %>
+        <p>Nu ai încă marketplace-uri. Următorul pas e să facem formularul de adăugare.</p>
+      <% } else { %>
+        <ul>
+          <% marketplaces.forEach(m => { %>
+            <li style="margin: 10px 0;">
+              <b><%= m.name %></b> — <span style="opacity:.85;"><%= m.baseUrl %></span>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+
   </div>
 </body>
 </html>
