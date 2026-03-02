@@ -7,6 +7,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String?
+  passwordHash String
+  role         String   @default("ADMIN")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  marketplaces Marketplace[]
+}
+
+model Marketplace {
+  id               String   @id @default(cuid())
+  name             String
+  baseUrl          String
+  platform         String   @default("wordpress")
+
+  wpUsername       String?
+  wpAppPasswordEnc String?  @db.Text // parola WP criptata (mai tarziu punem encrypt/decrypt)
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  createdById      String
+  createdBy        User     @relation(fields: [createdById], references: [id])
+
+  @@index([createdById])
+}
+
 model Contact {
   id        Int      @id @default(autoincrement())
   name      String
