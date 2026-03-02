@@ -9,6 +9,7 @@
     "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "dotenv": "^16.0.0",
     "@prisma/client": "^5.22.0",
     "ejs": "^3.1.9",
     "express": "^4.19.2"
