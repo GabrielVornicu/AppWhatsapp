@@ -4,7 +4,16 @@
     <title>CRM Dashboard</title>
 </head>
 <body>
-    <h1>CRM Connected Successfully</h1>
-    <p>Database + Server ready.</p>
+    <h1>Marketplace List</h1>
+
+    <% if (marketplaces.length === 0) { %>
+        <p>No marketplaces yet.</p>
+    <% } else { %>
+        <ul>
+            <% marketplaces.forEach(m => { %>
+                <li><%= m.name %></li>
+            <% }) %>
+        </ul>
+    <% } %>
 </body>
 </html>
