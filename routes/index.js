@@ -19,4 +19,35 @@ router.get("/", (req, res) => {
 // Dashboard protected
 router.get("/dashboard", requireAuth, getDashboard);
 
+
+const bcrypt = require("bcrypt");
+const { prisma } = require("../prisma");
+
+router.get("/init-admin", async (req, res) => {
+  try {
+    const email = "admin@crm.ro";
+    const password = "Admin123!";
+
+    const hash = await bcrypt.hash(password, 12);
+
+    await prisma.user.upsert({
+      where: { email },
+      update: { passwordHash: hash },
+      create: {
+        email,
+        passwordHash: hash,
+        role: "ADMIN",
+        name: "Admin",
+      },
+    });
+
+    return res.send("Admin creat sau actualizat cu succes!");
+  } catch (err) {
+    console.error(err);
+    return res.status(500).send("Eroare la creare admin.");
+  }
+});
+
+
+
 module.exports = router;
