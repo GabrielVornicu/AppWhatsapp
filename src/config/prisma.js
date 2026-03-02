@@ -1,9 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const logger = require("./logger");
 
-const prisma = new PrismaClient({
-  log: ["error", "warn"],
-});
+const prisma = new PrismaClient();
 
 async function connectDB() {
   try {
@@ -15,4 +13,7 @@ async function connectDB() {
   }
 }
 
-module.exports = { prisma, connectDB };
+module.exports = {
+  prisma,
+  connectDB,
+};
