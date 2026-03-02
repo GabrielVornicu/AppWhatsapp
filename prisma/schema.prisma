@@ -3,11 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" // sau mysql
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
-model TestConnection {
+model Marketplace {
   id        String   @id @default(uuid())
+  name      String
   createdAt DateTime @default(now())
 }
