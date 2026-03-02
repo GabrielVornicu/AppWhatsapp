@@ -1,5 +1,14 @@
 const prisma = require("../config/prisma");
+exports.home = (req, res) => {
+  res.render("index", {
+    title: "Node.js CRM",
+    message: "Structură MVC activă 🚀"
+  });
+};
 
+exports.contactPage = (req, res) => {
+  res.render("contact");
+};
 exports.contactSubmit = async (req, res) => {
   const { name } = req.body;
 
