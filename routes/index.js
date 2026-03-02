@@ -15,4 +15,16 @@ router.get("/dashboard", (req, res) => {
   });
 });
 
+router.get("/contact", (req, res) => {
+  res.render("contact");
+});
+
+router.post("/contact", (req, res) => {
+  const { name } = req.body;
+
+  console.log("Form submitted:", name);
+
+  res.redirect("/dashboard");
+});
+
 module.exports = router;
