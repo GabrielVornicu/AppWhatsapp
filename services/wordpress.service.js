@@ -140,6 +140,33 @@ async function testConnection(siteUrl, username, appPassword) {
   return true;
 }
 
+async function updateLeadMetaInWp(marketplace, wpPostId, metaPatch = {}) {
+  const baseUrl = String(marketplace.baseUrl).replace(/\/+$/, "");
+  const wpUsername = marketplace.wpUsername;
+  const wpAppPassword = marketplace.wpAppPasswordEnc ? decrypt(marketplace.wpAppPasswordEnc) : null;
+
+  if (!wpUsername || !wpAppPassword) throw new Error("WP credentials missing for meta update");
+
+  // dacă leadCpt e setat, actualizăm acel endpoint; altfel posts
+  const cpt = marketplace.leadCpt || "posts";
+  const url = `${baseUrl}/wp-json/wp/v2/${cpt}/${wpPostId}`;
+
+  const res = await axios.post(
+    url,
+    { meta: metaPatch },
+    {
+      auth: { username: wpUsername, password: wpAppPassword },
+      timeout: 20000,
+    }
+  );
+
+  return res.data;
+}
+
+
+
+
+
 module.exports = {
   fetchPostTypes,
   fetchPosts,
