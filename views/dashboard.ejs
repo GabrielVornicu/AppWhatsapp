@@ -10,13 +10,16 @@
   <div class="app">
     <aside class="sidebar">
       <div class="brand">AppWhatsapp</div>
+
       <nav class="nav">
         <a class="nav__link active" href="/dashboard">Dashboard</a>
         <a class="nav__link" href="/marketplace/new">Add marketplace</a>
       </nav>
+
       <div class="sidebar__footer">
         <div class="muted">Logat ca</div>
         <div class="strong"><%= user.email %></div>
+
         <form method="POST" action="/logout" style="margin-top:12px;">
           <button class="btn btn--ghost" type="submit">Logout</button>
         </form>
@@ -29,19 +32,31 @@
           <h1>Marketplace-uri</h1>
           <div class="muted">Administrează conexiunile WordPress</div>
         </div>
-        <a class="btn btn--primary" href="/marketplace/new">+ Add marketplace</a>
+
+        <a class="btn btn--primary" href="/marketplace/new">
+          + Add marketplace
+        </a>
       </div>
 
       <% if (!marketplaces.length) { %>
+
         <div class="card">
           <h2>Niciun marketplace încă</h2>
-          <p class="muted">Adaugă primul marketplace și testăm conexiunea.</p>
-          <a class="btn btn--primary" href="/marketplace/new">Add marketplace</a>
+          <p class="muted">
+            Adaugă primul marketplace și testăm conexiunea WordPress.
+          </p>
+          <a class="btn btn--primary" href="/marketplace/new">
+            Add marketplace
+          </a>
         </div>
+
       <% } else { %>
+
         <div class="grid">
           <% marketplaces.forEach(m => { %>
-            <a class="card card--link" href="/marketplace/<%= m.id %>">
+
+            <div class="card">
+
               <div class="card__head">
                 <div>
                   <div class="title"><%= m.name %></div>
@@ -49,28 +64,61 @@
                 </div>
 
                 <span class="badge
-                  <%= m.connectionStatus === 'connected' ? 'badge--ok' : (m.connectionStatus === 'failed' ? 'badge--bad' : 'badge--unk') %>">
+                  <%= m.connectionStatus === 'connected' 
+                      ? 'badge--ok' 
+                      : (m.connectionStatus === 'failed' 
+                          ? 'badge--bad' 
+                          : 'badge--unk') %>">
                   <%= m.connectionStatus %>
                 </span>
               </div>
 
               <div class="card__body">
+
                 <div class="row">
                   <span class="muted small">Last check</span>
-                  <span class="small"><%= m.lastCheckedAt ? new Date(m.lastCheckedAt).toLocaleString() : "—" %></span>
+                  <span class="small">
+                    <%= m.lastCheckedAt 
+                        ? new Date(m.lastCheckedAt).toLocaleString() 
+                        : "—" %>
+                  </span>
                 </div>
+
                 <div class="row">
                   <span class="muted small">Platform</span>
                   <span class="small"><%= m.platform %></span>
                 </div>
+
               </div>
 
               <div class="card__foot">
-                <span class="muted small">Open →</span>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+
+                  <a class="btn btn--ghost small" 
+                     href="/marketplace/<%= m.id %>">
+                    Open
+                  </a>
+
+                  <a class="btn btn--primary small"
+                     href="/wordpress/<%= m.id %>/posts">
+                    View Posts
+                  </a>
+
+                  <a class="btn btn--ghost small"
+                     href="/wordpress/<%= m.id %>/test">
+                    Test Connection
+                  </a>
+
+                </div>
+
               </div>
-            </a>
+
+            </div>
+
           <% }) %>
         </div>
+
       <% } %>
     </main>
   </div>
