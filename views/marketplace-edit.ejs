@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit - <%= marketplace.name %></title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">AppWhatsapp</div>
+      <nav class="nav">
+        <a class="nav__link" href="/dashboard">Dashboard</a>
+        <a class="nav__link" href="/marketplace/new">Add marketplace</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Edit marketplace</h1>
+          <div class="muted"><%= marketplace.baseUrl %></div>
+        </div>
+        <a class="btn btn--ghost" href="/marketplace/<%= marketplace.id %>">Back</a>
+      </div>
+
+      <div class="card">
+        <% if (error) { %>
+          <div class="alert alert--error"><%= error %></div>
+        <% } %>
+
+        <form method="POST" action="/marketplace/<%= marketplace.id %>/edit" class="form">
+          <div class="form__row">
+            <label>Nume</label>
+            <input type="text" name="name" value="<%= marketplace.name %>" required />
+          </div>
+
+          <div class="form__row">
+            <label>Base URL</label>
+            <input type="url" name="baseUrl" value="<%= marketplace.baseUrl %>" required />
+          </div>
+
+          <div class="form__row">
+            <label>WP Username</label>
+            <input type="text" name="wpUsername" value="<%= marketplace.wpUsername || '' %>" required />
+          </div>
+
+          <div class="form__row">
+            <label>WP Application Password</label>
+            <input type="password" name="wpAppPassword" placeholder="(lasă gol ca să rămână neschimbată)" />
+            <div class="hint">Dacă o schimbi, status devine “unknown” până la următorul test.</div>
+          </div>
+
+          <div class="form__actions">
+            <button class="btn btn--primary" type="submit">Save</button>
+            <a class="btn btn--ghost" href="/marketplace/<%= marketplace.id %>">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
