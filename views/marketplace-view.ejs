@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= marketplace.name %></title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">AppWhatsapp</div>
+      <nav class="nav">
+        <a class="nav__link" href="/dashboard">Dashboard</a>
+        <a class="nav__link" href="/marketplace/new">Add marketplace</a>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1><%= marketplace.name %></h1>
+          <div class="muted"><%= marketplace.baseUrl %></div>
+        </div>
+        <div class="topbar__actions">
+          <a class="btn btn--ghost" href="/marketplace/<%= marketplace.id %>/edit">Edit</a>
+          <form method="POST" action="/marketplace/<%= marketplace.id %>/delete" onsubmit="return confirm('Sigur vrei să ștergi marketplace-ul?');">
+            <button class="btn btn--danger" type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+
+      <% if (msg) { %>
+        <div class="alert <%= type === 'success' ? 'alert--success' : (type === 'error' ? 'alert--error' : 'alert--info') %>">
+          <%= msg %>
+        </div>
+      <% } %>
+
+      <div class="grid2">
+        <div class="card">
+          <div class="row">
+            <span class="muted">Status</span>
+            <span class="badge
+              <%= marketplace.connectionStatus === 'connected' ? 'badge--ok' : (marketplace.connectionStatus === 'failed' ? 'badge--bad' : 'badge--unk') %>">
+              <%= marketplace.connectionStatus %>
+            </span>
+          </div>
+
+          <div class="row">
+            <span class="muted">Last check</span>
+            <span><%= marketplace.lastCheckedAt ? new Date(marketplace.lastCheckedAt).toLocaleString() : "—" %></span>
+          </div>
+
+          <div class="row">
+            <span class="muted">Platform</span>
+            <span><%= marketplace.platform %></span>
+          </div>
+
+          <div class="divider"></div>
+
+          <form method="POST" action="/marketplace/<%= marketplace.id %>/test">
+            <button class="btn btn--primary" type="submit">Test connection</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Quick actions</h2>
+          <p class="muted">Următorul pas: conectăm “Posts / Campaigns / WhatsApp”.</p>
+          <div class="stack">
+            <a class="btn btn--ghost" href="/marketplace/<%= marketplace.id %>/edit">Edit settings</a>
+            <a class="btn btn--ghost" href="/dashboard">Back to dashboard</a>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
