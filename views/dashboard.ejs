@@ -7,40 +7,72 @@
   <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <div class="container">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
-      <h1>Dashboard</h1>
-
-      <form method="POST" action="/logout">
-        <button type="submit">Logout</button>
-      </form>
-    </div>
-
-    <p style="opacity:.9; margin-top: 0;">Logat ca: <b><%= user.email %></b></p>
-
-    <div class="card" style="margin-top:16px;">
-      <div style="display:flex; gap:10px; flex-wrap:wrap;">
-        <a class="btnLink" href="/marketplace/new">➕ Adaugă marketplace</a>
-        <a class="btnLink" href="#list">📋 Marketplace-uri adăugate</a>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">AppWhatsapp</div>
+      <nav class="nav">
+        <a class="nav__link active" href="/dashboard">Dashboard</a>
+        <a class="nav__link" href="/marketplace/new">Add marketplace</a>
+      </nav>
+      <div class="sidebar__footer">
+        <div class="muted">Logat ca</div>
+        <div class="strong"><%= user.email %></div>
+        <form method="POST" action="/logout" style="margin-top:12px;">
+          <button class="btn btn--ghost" type="submit">Logout</button>
+        </form>
       </div>
-    </div>
+    </aside>
 
-    <div id="list" class="card" style="margin-top:16px;">
-      <h2 style="margin-top:0;">Marketplace-uri adăugate</h2>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Marketplace-uri</h1>
+          <div class="muted">Administrează conexiunile WordPress</div>
+        </div>
+        <a class="btn btn--primary" href="/marketplace/new">+ Add marketplace</a>
+      </div>
 
       <% if (!marketplaces.length) { %>
-        <p>Nu ai încă marketplace-uri. Următorul pas e să facem formularul de adăugare.</p>
+        <div class="card">
+          <h2>Niciun marketplace încă</h2>
+          <p class="muted">Adaugă primul marketplace și testăm conexiunea.</p>
+          <a class="btn btn--primary" href="/marketplace/new">Add marketplace</a>
+        </div>
       <% } else { %>
-        <ul>
+        <div class="grid">
           <% marketplaces.forEach(m => { %>
-            <li style="margin: 10px 0;">
-              <b><%= m.name %></b> — <span style="opacity:.85;"><%= m.baseUrl %></span>
-            </li>
-          <% }) %>
-        </ul>
-      <% } %>
-    </div>
+            <a class="card card--link" href="/marketplace/<%= m.id %>">
+              <div class="card__head">
+                <div>
+                  <div class="title"><%= m.name %></div>
+                  <div class="muted small"><%= m.baseUrl %></div>
+                </div>
 
+                <span class="badge
+                  <%= m.connectionStatus === 'connected' ? 'badge--ok' : (m.connectionStatus === 'failed' ? 'badge--bad' : 'badge--unk') %>">
+                  <%= m.connectionStatus %>
+                </span>
+              </div>
+
+              <div class="card__body">
+                <div class="row">
+                  <span class="muted small">Last check</span>
+                  <span class="small"><%= m.lastCheckedAt ? new Date(m.lastCheckedAt).toLocaleString() : "—" %></span>
+                </div>
+                <div class="row">
+                  <span class="muted small">Platform</span>
+                  <span class="small"><%= m.platform %></span>
+                </div>
+              </div>
+
+              <div class="card__foot">
+                <span class="muted small">Open →</span>
+              </div>
+            </a>
+          <% }) %>
+        </div>
+      <% } %>
+    </main>
   </div>
 </body>
 </html>
