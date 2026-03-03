@@ -26,7 +26,10 @@ model Marketplace {
   platform         String   @default("wordpress")
 
   wpUsername       String?
-  wpAppPasswordEnc String?  @db.Text // parola WP criptata (mai tarziu punem encrypt/decrypt)
+  wpAppPasswordEnc String?  @db.Text
+
+  connectionStatus String   @default("unknown") // unknown | connected | failed
+  lastCheckedAt    DateTime?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
