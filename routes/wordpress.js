@@ -40,7 +40,11 @@ router.get("/wordpress/:id/posts", async (req, res) => {
 // 🔹 TEST CONNECTION
 router.get("/wordpress/:id/test", async (req, res) => {
   try {
-    const marketplaceId = Number(req.params.id);
+    const marketplaceId = req.params.id;
+
+    if (!marketplaceId) {
+      return res.status(400).send("Marketplace ID missing");
+    }
 
     const marketplace = await prisma.marketplace.findUnique({
       where: { id: marketplaceId },
@@ -59,7 +63,7 @@ router.get("/wordpress/:id/test", async (req, res) => {
     res.send(ok ? "Connection OK" : "Connection Failed");
 
   } catch (error) {
-    console.error("Test route error:", error.message);
+    console.error("Test route error:", error);
     res.status(500).send("Internal server error");
   }
 });
