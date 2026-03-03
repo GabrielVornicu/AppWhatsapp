@@ -32,10 +32,10 @@ model Marketplace {
   lastCheckedAt    DateTime?
 
   // ==============================
-  // 🔥 CRM CONFIG (NEW)
+  // 🔥 CRM CONFIG
   // ==============================
 
-  leadCpt              String?   // ce CPT urmarim pentru leads
+  leadCpt              String?
   crmReady             Boolean   @default(false)
   crmStatus            String    @default("not_configured") // not_configured | ready | missing_fields
   autoSyncEnabled      Boolean   @default(true)
@@ -49,7 +49,31 @@ model Marketplace {
   createdById      String
   createdBy        User     @relation(fields: [createdById], references: [id])
 
+  fields           MarketplaceField[]
+
   @@index([createdById])
+}
+
+model MarketplaceField {
+  id              String   @id @default(cuid())
+
+  marketplaceId   String
+  marketplace     Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
+
+  wpKey           String   // ex: crm_phone, titlu, localitate
+  label           String   // ex: Telefon client
+  fieldType       String   @default("string") // string | number | boolean | date
+
+  isVisible       Boolean  @default(true)
+  isEditable      Boolean  @default(false)
+  isFilterable    Boolean  @default(true)
+
+  sortOrder       Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([marketplaceId])
 }
 
 model Contact {
