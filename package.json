@@ -9,6 +9,7 @@
     "prisma:push": "prisma db push --accept-data-loss"
   },
   "dependencies": {
+    "puppeteer": "^22.10.0",
     "whatsapp-web.js": "^1.25.0",
     "qrcode": "^1.5.3",
     "axios": "^1.6.0",
