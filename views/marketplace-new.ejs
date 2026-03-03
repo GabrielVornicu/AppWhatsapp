@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Adaugă Marketplace</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Adaugă Marketplace</h1>
+
+    <% if (error) { %>
+      <p style="color:red;"><%= error %></p>
+    <% } %>
+
+    <form method="POST" action="/marketplace" class="card">
+      <input type="text" name="name" placeholder="Nume marketplace" required>
+      <input type="url" name="baseUrl" placeholder="https://site.ro" required>
+      <input type="text" name="wpUsername" placeholder="WP Username" required>
+      <input type="password" name="wpAppPassword" placeholder="WP Application Password" required>
+      <button type="submit">Salvează</button>
+    </form>
+
+    <br>
+    <a href="/dashboard">← Înapoi la Dashboard</a>
+  </div>
+</body>
+</html>
