@@ -1,22 +1,26 @@
 const express = require("express");
 const router = express.Router();
-const { fetchPosts } = require("../services/wordpress.service");
+const { PrismaClient } = require("@prisma/client");
 
+const prisma = new PrismaClient();
+
+const { fetchPosts, testConnection } = require("../services/wordpress.service");
+
+// 🔹 GET POSTS
 router.get("/wordpress/:id/posts", async (req, res) => {
   try {
-    const marketplaceId = req.params.id;
+    const marketplaceId = Number(req.params.id);
 
-    // TODO: luam datele din DB prin prisma
-    const marketplace = await req.prisma.marketplace.findUnique({
+    const marketplace = await prisma.marketplace.findUnique({
       where: { id: marketplaceId },
     });
 
     if (!marketplace) {
-      return res.status(404).json({ error: "Marketplace not found" });
+      return res.status(404).send("Marketplace not found");
     }
 
     const posts = await fetchPosts(
-      marketplace.siteUrl,
+      marketplace.baseUrl,
       marketplace.wpUsername,
       marketplace.wpAppPassword
     );
@@ -25,7 +29,34 @@ router.get("/wordpress/:id/posts", async (req, res) => {
 
   } catch (error) {
     console.error("Route error:", error.message);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).send("Internal server error");
+  }
+});
+
+// 🔹 TEST CONNECTION
+router.get("/wordpress/:id/test", async (req, res) => {
+  try {
+    const marketplaceId = Number(req.params.id);
+
+    const marketplace = await prisma.marketplace.findUnique({
+      where: { id: marketplaceId },
+    });
+
+    if (!marketplace) {
+      return res.status(404).send("Marketplace not found");
+    }
+
+    const ok = await testConnection(
+      marketplace.baseUrl,
+      marketplace.wpUsername,
+      marketplace.wpAppPassword
+    );
+
+    res.send(ok ? "Connection OK" : "Connection Failed");
+
+  } catch (error) {
+    console.error("Test route error:", error.message);
+    res.status(500).send("Internal server error");
   }
 });
 
