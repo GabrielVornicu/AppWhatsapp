@@ -5,15 +5,7 @@ const path = require("path");
 const session = require("express-session");
 
 const routes = require("./routes");
-const { exec } = require("child_process");
 
-exec("npx prisma migrate deploy", (error, stdout, stderr) => {
-  if (error) {
-    console.error("Migration error:", error);
-  } else {
-    console.log("Migration executed");
-  }
-});
 const app = express();
 
 // body
