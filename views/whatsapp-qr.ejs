@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WhatsApp QR</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container" style="max-width: 900px;">
+    <h1><%= marketplace.name %> — WhatsApp</h1>
+    <p>Status: <b><%= marketplace.whatsappStatus %></b></p>
+
+    <% if (qrDataUrl) { %>
+      <p>Scanează QR cu WhatsApp (telefonul marketplace-ului).</p>
+      <img src="<%= qrDataUrl %>" style="max-width: 360px; border-radius: 12px;" />
+      <p style="opacity:.8;">Dacă nu se conectează, dă refresh.</p>
+    <% } else { %>
+      <p>Nu avem QR acum. Dacă status e connected, e ok.</p>
+      <p>Dă refresh.</p>
+    <% } %>
+
+    <p><a href="/marketplace/<%= marketplace.id %>">Back</a></p>
+  </div>
+</body>
+</html>
