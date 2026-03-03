@@ -144,6 +144,9 @@ model MessageTemplate {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
+  // ✅ RELAȚIA INVERSĂ CARE LIPSEA
+  queueItems      MessageQueue[]
+
   @@index([marketplaceId])
   @@index([stepNumber])
 }
