@@ -8,7 +8,7 @@ const {
 
 const { requireAuth, redirectIfAuth } = require("../config/auth");
 const { getDashboard } = require("../controllers/mainController");
-const { getLogin, postLogin, postLogout } = require("../controllers/authController);
+const { getLogin, postLogin, postLogout } = require("../controllers/authController");
 
 // Auth
 router.get("/login", redirectIfAuth, getLogin);
