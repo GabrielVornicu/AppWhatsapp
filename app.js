@@ -5,7 +5,8 @@ const path = require("path");
 const session = require("express-session");
 
 const routes = require("./routes");
-
+const wordpressRoutes = require("./routes/wordpress");
+app.use("/", wordpressRoutes);
 const app = express();
 
 // body
