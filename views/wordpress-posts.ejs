@@ -25,51 +25,89 @@
       <a class="btn btn--primary" href="/dashboard">← Back</a>
     </div>
 
-    <% if (!posts.length) { %>
+    <!-- ✅ CPT selector -->
+    <div class="card" style="margin-bottom: 12px;">
+      <div class="card__body" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <form method="GET" action="/wordpress/<%= marketplace.id %>/posts" style="display:flex; gap:10px; align-items:center;">
+          <span class="muted small"><strong>CPT:</strong></span>
+
+          <select name="type" onchange="this.form.submit()" style="padding:8px; border-radius:10px;">
+            <% (postTypes || []).forEach(t => { %>
+              <option value="<%= t.rest_base %>" <%= selectedType === t.rest_base ? "selected" : "" %>>
+                <%= t.rest_base %> — <%= t.name %>
+              </option>
+            <% }) %>
+          </select>
+
+          <input type="hidden" name="perPage" value="<%= perPage %>">
+        </form>
+
+        <div class="muted small">
+          Total: <%= total || 0 %> • Pagina <%= page || 1 %> / <%= totalPages || 0 %>
+        </div>
+
+        <div style="margin-left:auto; display:flex; gap:10px;">
+          <% if ((page || 1) > 1) { %>
+            <a class="btn btn--ghost small"
+               href="/wordpress/<%= marketplace.id %>/posts?type=<%= encodeURIComponent(selectedType) %>&page=<%= (page - 1) %>&perPage=<%= perPage %>">
+              ◀ Prev
+            </a>
+          <% } %>
+
+          <% if ((totalPages || 0) && (page || 1) < (totalPages || 0)) { %>
+            <a class="btn btn--ghost small"
+               href="/wordpress/<%= marketplace.id %>/posts?type=<%= encodeURIComponent(selectedType) %>&page=<%= (page + 1) %>&perPage=<%= perPage %>">
+              Next ▶
+            </a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <% if (!posts || !posts.length) { %>
       <div class="card">
         <h2>No posts found</h2>
       </div>
     <% } else { %>
 
-      <div class="grid">
-        <% posts.forEach(post => { %>
+      <div class="card">
+        <div class="card__body" style="overflow:auto;">
+          <table style="width:100%; border-collapse:collapse; min-width: 900px;">
+            <thead>
+              <tr>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.08);">ID</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.08);">Titlu</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.08);">Slug</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.08);">Status</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.08);">Date</th>
+                <th style="text-align:left; padding:10px; border-bottom:1px solid rgba(255,255,255,0.08);">Link</th>
+              </tr>
+            </thead>
 
-          <div class="card">
-            <div class="card__head">
-              <div class="title">
-                <%- post.title.rendered %>
-              </div>
-
-              <span class="badge 
-                <%= post.status === 'publish' ? 'badge--ok' : 'badge--unk' %>">
-                <%= post.status %>
-              </span>
-            </div>
-
-            <div class="card__body">
-              <div class="row">
-                <span class="muted small">Date</span>
-                <span class="small">
-                  <%= new Date(post.date).toLocaleString() %>
-                </span>
-              </div>
-
-              <div class="row">
-                <span class="muted small">Slug</span>
-                <span class="small"><%= post.slug %></span>
-              </div>
-            </div>
-
-            <div class="card__foot">
-              <a class="btn btn--ghost small" 
-                 href="<%= post.link %>" target="_blank">
-                 View
-              </a>
-            </div>
-
-          </div>
-
-        <% }) %>
+            <tbody>
+              <% posts.forEach(post => { %>
+                <tr>
+                  <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.06);"><%= post.id %></td>
+                  <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <%- (post.title && post.title.rendered) ? post.title.rendered : "" %>
+                  </td>
+                  <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.06);"><%= post.slug %></td>
+                  <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <span class="badge <%= post.status === 'publish' ? 'badge--ok' : 'badge--unk' %>">
+                      <%= post.status %>
+                    </span>
+                  </td>
+                  <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <%= post.date ? new Date(post.date).toLocaleString() : "" %>
+                  </td>
+                  <td style="padding:10px; border-bottom:1px solid rgba(255,255,255,0.06);">
+                    <a class="btn btn--ghost small" href="<%= post.link %>" target="_blank">View</a>
+                  </td>
+                </tr>
+              <% }) %>
+            </tbody>
+          </table>
+        </div>
       </div>
 
     <% } %>
