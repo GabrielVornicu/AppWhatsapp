@@ -1,27 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-  <title>Adaugă Marketplace</title>
-  <link rel="stylesheet" href="/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add marketplace</title>
+  <link rel="stylesheet" href="/style.css" />
 </head>
 <body>
-  <div class="container">
-    <h1>Adaugă Marketplace</h1>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">AppWhatsapp</div>
+      <nav class="nav">
+        <a class="nav__link" href="/dashboard">Dashboard</a>
+        <a class="nav__link active" href="/marketplace/new">Add marketplace</a>
+      </nav>
+    </aside>
 
-    <% if (error) { %>
-      <p style="color:red;"><%= error %></p>
-    <% } %>
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1>Add marketplace</h1>
+          <div class="muted">Conectează un site WordPress prin Application Password</div>
+        </div>
+        <a class="btn btn--ghost" href="/dashboard">Back</a>
+      </div>
 
-    <form method="POST" action="/marketplace" class="card">
-      <input type="text" name="name" placeholder="Nume marketplace" required>
-      <input type="url" name="baseUrl" placeholder="https://site.ro" required>
-      <input type="text" name="wpUsername" placeholder="WP Username" required>
-      <input type="password" name="wpAppPassword" placeholder="WP Application Password" required>
-      <button type="submit">Salvează</button>
-    </form>
+      <div class="card">
+        <% if (error) { %>
+          <div class="alert alert--error"><%= error %></div>
+        <% } %>
 
-    <br>
-    <a href="/dashboard">← Înapoi la Dashboard</a>
+        <form method="POST" action="/marketplace" class="form">
+          <div class="form__row">
+            <label>Nume</label>
+            <input type="text" name="name" placeholder="ex: Programare ITP" required />
+          </div>
+
+          <div class="form__row">
+            <label>Base URL</label>
+            <input type="url" name="baseUrl" placeholder="https://site.ro" required />
+          </div>
+
+          <div class="form__row">
+            <label>WP Username</label>
+            <input type="text" name="wpUsername" placeholder="admin" required />
+          </div>
+
+          <div class="form__row">
+            <label>WP Application Password</label>
+            <input type="password" name="wpAppPassword" placeholder="xxxx xxxx xxxx xxxx" required />
+            <div class="hint">Se salvează criptat. Îl folosim doar la API calls.</div>
+          </div>
+
+          <div class="form__actions">
+            <button class="btn btn--primary" type="submit">Save & Test</button>
+            <a class="btn btn--ghost" href="/dashboard">Cancel</a>
+          </div>
+        </form>
+      </div>
+    </main>
   </div>
 </body>
 </html>
