@@ -4,9 +4,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "postinstall": "prisma generate && prisma db push --accept-data-loss && node node_modules/puppeteer/install.js",
-    "prisma:generate": "prisma generate",
-    "prisma:push": "prisma db push --accept-data-loss"
+    "postinstall": "prisma generate && prisma db push --accept-data-loss"
   },
   "dependencies": {
     "puppeteer": "^22.10.0",
