@@ -4,7 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 
-const { fetchPosts, testConnection } = require("../services/wordpress.service");
+const { fetchPosts, fetchPostTypes, testConnection } = require("../services/wordpress.service");
 
 // Helpers (keep local, no extra files)
 function normalizeUrl(url = "") {
@@ -35,7 +35,7 @@ function pickPhoneFromMeta(meta) {
   return null;
 }
 
-// 🔹 GET POSTS (demo UI)
+// 🔹 GET POSTS (UI) + select CPT
 router.get("/wordpress/:id/posts", async (req, res) => {
   try {
     const marketplaceId = req.params.id;
@@ -52,13 +52,41 @@ router.get("/wordpress/:id/posts", async (req, res) => {
       return res.status(404).send("Marketplace not found");
     }
 
-    const posts = await fetchPosts(
+    const selectedType = String(req.query.type || "posts").trim();
+    const page = Math.max(1, parseInt(req.query.page || "1", 10));
+    const perPage = Math.min(100, Math.max(1, parseInt(req.query.perPage || "50", 10)));
+
+    // 1) CPT list
+    const postTypes = await fetchPostTypes(
       marketplace.baseUrl,
       marketplace.wpUsername,
       marketplace.wpAppPassword
     );
 
-    res.render("wordpress-posts", { posts, marketplace });
+    // Validare: daca cineva baga manual un type invalid
+    const isValid = postTypes.some((t) => t.rest_base === selectedType);
+    const finalType = isValid ? selectedType : "posts";
+
+    // 2) Posts for selected type
+    const result = await fetchPosts(
+      marketplace.baseUrl,
+      marketplace.wpUsername,
+      marketplace.wpAppPassword,
+      finalType,
+      page,
+      perPage
+    );
+
+    res.render("wordpress-posts", {
+      posts: result.items,
+      marketplace,
+      postTypes,
+      selectedType: finalType,
+      page,
+      perPage,
+      total: result.total,
+      totalPages: result.totalPages,
+    });
   } catch (error) {
     console.error("Route error:", error);
     res.status(500).send("Internal server error");
