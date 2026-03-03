@@ -4,10 +4,7 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 
-const whatsappRoutes = require("./routes/whatsapp");
-app.use("/", whatsappRoutes);
-
-// 🔹 INIT APP PRIMA DATĂ
+// 🔹 INIT APP PRIMA DATĂ (OBLIGATORIU)
 const app = express();
 
 // 🔹 BODY PARSERS
@@ -39,10 +36,12 @@ app.use(
 // 🔹 IMPORT ROUTES DUPĂ ce app există
 const routes = require("./routes");
 const wordpressRoutes = require("./routes/wordpress");
+const whatsappRoutes = require("./routes/whatsapp");
 
 // 🔹 USE ROUTES
 app.use("/", routes);
 app.use("/", wordpressRoutes);
+app.use("/", whatsappRoutes);
 
 // 🔹 404
 app.use((req, res) => {
