@@ -4,6 +4,9 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 
+const whatsappRoutes = require("./routes/whatsapp");
+app.use("/", whatsappRoutes);
+
 // 🔹 INIT APP PRIMA DATĂ
 const app = express();
 
