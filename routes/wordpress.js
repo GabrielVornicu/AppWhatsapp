@@ -9,7 +9,11 @@ const { fetchPosts, testConnection } = require("../services/wordpress.service");
 // 🔹 GET POSTS
 router.get("/wordpress/:id/posts", async (req, res) => {
   try {
-    const marketplaceId = Number(req.params.id);
+    const marketplaceId = req.params.id; // 🔥 NU mai folosim Number()
+
+    if (!marketplaceId) {
+      return res.status(400).send("Marketplace ID missing");
+    }
 
     const marketplace = await prisma.marketplace.findUnique({
       where: { id: marketplaceId },
@@ -28,7 +32,7 @@ router.get("/wordpress/:id/posts", async (req, res) => {
     res.json(posts);
 
   } catch (error) {
-    console.error("Route error:", error.message);
+    console.error("Route error:", error);
     res.status(500).send("Internal server error");
   }
 });
