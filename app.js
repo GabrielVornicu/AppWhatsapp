@@ -4,23 +4,21 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 
-const routes = require("./routes");
-const wordpressRoutes = require("./routes/wordpress");
-app.use("/", wordpressRoutes);
+// 🔹 INIT APP PRIMA DATĂ
 const app = express();
 
-// body
+// 🔹 BODY PARSERS
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// static
+// 🔹 STATIC FILES
 app.use(express.static(path.join(__dirname, "public")));
 
-// view engine
+// 🔹 VIEW ENGINE
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// sessions (MVP)
+// 🔹 SESSIONS (MVP)
 app.use(
   session({
     name: "appwhatsapp.sid",
@@ -35,10 +33,17 @@ app.use(
   })
 );
 
-// routes
-app.use("/", routes);
+// 🔹 IMPORT ROUTES DUPĂ ce app există
+const routes = require("./routes");
+const wordpressRoutes = require("./routes/wordpress");
 
-// 404
-app.use((req, res) => res.status(404).send("Not found"));
+// 🔹 USE ROUTES
+app.use("/", routes);
+app.use("/", wordpressRoutes);
+
+// 🔹 404
+app.use((req, res) => {
+  res.status(404).send("Not found");
+});
 
 module.exports = app;
