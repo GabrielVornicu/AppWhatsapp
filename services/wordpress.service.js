@@ -35,22 +35,38 @@ async function fetchPostTypes(siteUrl, username, appPassword) {
 
   const data = await response.json();
 
+  // Tipuri interne WordPress pe care NU le vrem
+  const exclude = new Set([
+    "attachment",
+    "nav_menu_item",
+    "wp_block",
+    "wp_template",
+    "wp_template_part",
+    "wp_global_styles",
+    "wp_navigation",
+    "wp_font_family",
+    "wp_font_face",
+    "elementor_library",
+    "elementor_snippet",
+    "jet-form-builder",
+    "jet-theme-core",
+    "jet-page-template",
+    "jet-engine",
+    "e-floating-buttons"
+  ]);
+
   const types = Object.entries(data || {})
     .filter(([key, t]) => {
       if (!t) return false;
 
-      // trebuie sa fie in REST
-      if (!t.show_in_rest) return false;
-
-      // exclude attachment (media)
-      if (key === "attachment") return false;
+      // exclude sistem
+      if (exclude.has(key)) return false;
 
       // trebuie sa aiba rest_base valid
       if (!t.rest_base) return false;
 
-      // trebuie sa suporte title (CPT real)
-      if (!Array.isArray(t.supports) || !t.supports.includes("title"))
-        return false;
+      // trebuie sa aiba endpoint de items
+      if (!t._links || !t._links["wp:items"]) return false;
 
       return true;
     })
