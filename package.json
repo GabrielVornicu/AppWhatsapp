@@ -9,6 +9,7 @@
     "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "@prisma/client": "^5.22.0",
     "bcrypt": "^5.1.1",
     "dotenv": "^16.4.5",
