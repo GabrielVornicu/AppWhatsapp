@@ -39,11 +39,11 @@ async function fetchPostTypes(siteUrl, username, appPassword) {
     .filter(([key, t]) => {
       if (!t) return false;
 
-      // trebuie sa fie public
-      if (!t.public) return false;
-
       // trebuie sa fie expus in REST
       if (!t.show_in_rest) return false;
+
+      // trebuie sa fie queryable
+      if (!t.publicly_queryable) return false;
 
       // excludem attachment (media)
       if (key === "attachment") return false;
@@ -59,7 +59,6 @@ async function fetchPostTypes(siteUrl, username, appPassword) {
 
   return types;
 }
-
 /**
  * ✅ Fetch posts for selected post type
  */
