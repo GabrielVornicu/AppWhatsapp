@@ -39,21 +39,25 @@ async function fetchPostTypes(siteUrl, username, appPassword) {
     .filter(([key, t]) => {
       if (!t) return false;
 
-      // trebuie sa fie expus in REST
+      // trebuie sa fie in REST
       if (!t.show_in_rest) return false;
 
-      // trebuie sa fie queryable
-      if (!t.publicly_queryable) return false;
-
-      // excludem attachment (media)
+      // exclude attachment (media)
       if (key === "attachment") return false;
+
+      // trebuie sa aiba rest_base valid
+      if (!t.rest_base) return false;
+
+      // trebuie sa suporte title (CPT real)
+      if (!Array.isArray(t.supports) || !t.supports.includes("title"))
+        return false;
 
       return true;
     })
     .map(([key, t]) => ({
       key,
       name: t.name || key,
-      rest_base: t.rest_base || key,
+      rest_base: t.rest_base,
     }))
     .sort((a, b) => a.rest_base.localeCompare(b.rest_base));
 
