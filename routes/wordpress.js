@@ -29,7 +29,10 @@ router.get("/wordpress/:id/posts", async (req, res) => {
       marketplace.wpAppPassword
     );
 
-    res.json(posts);
+    res.render("wordpress-posts", {
+  posts,
+  marketplace
+});
 
   } catch (error) {
     console.error("Route error:", error);
