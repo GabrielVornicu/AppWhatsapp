@@ -38,19 +38,19 @@ model Marketplace {
   autoSyncEnabled  Boolean   @default(true)
   lastSyncAt       DateTime?
 
-  // ✅ PUSHBULLET CONFIG (per marketplace)
+  // PUSHBULLET CONFIG
   pushbulletTokenEnc  String? @db.Text
   pushbulletDeviceId  String?
 
-  // ✅ SCHEDULING / ANTI-SPAM (per marketplace)
-  sendWindowStartHour Int     @default(9)   // 09:00
-  sendWindowEndHour   Int     @default(20)  // 20:00
-  minDelaySeconds     Int     @default(90)  // delay minim între mesaje
-  timezone            String? // ex "Europe/Bucharest" (optional)
+  // SCHEDULING / ANTI-SPAM
+  sendWindowStartHour Int     @default(9)
+  sendWindowEndHour   Int     @default(20)
+  minDelaySeconds     Int     @default(90)
+  timezone            String?
 
-  // ✅ WHATSAPP SESSION STATUS
+  // WHATSAPP STATUS
   whatsappEnabled     Boolean  @default(true)
-  whatsappStatus      String   @default("disconnected") // disconnected | qr | connected | error
+  whatsappStatus      String   @default("disconnected")
   whatsappLastQrAt    DateTime?
   whatsappLastOkAt    DateTime?
   whatsappLastError   String?  @db.Text
@@ -116,6 +116,9 @@ model Lead {
 
   queueItems        MessageQueue[]
 
+  // ✅ RELAȚIA INVERSĂ CARE LIPSEA
+  waInboundMessages WhatsAppInboundMessage[]
+
   @@index([marketplaceId])
   @@index([wpPostId])
   @@index([phone])
@@ -128,13 +131,12 @@ model MessageTemplate {
   marketplace     Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
 
   name            String
-  channel         String   @default("whatsapp") // whatsapp | sms | pushbullet (optional)
+  channel         String   @default("whatsapp")
   variantType     String   @default("non_client")
   content         String   @db.Text
 
-  // ✅ follow-up logic
-  stepNumber          Int   @default(1)  // 1,2,3...
-  followUpAfterMinutes Int  @default(0)  // dacă e 0 => nu auto-schedule next
+  stepNumber           Int   @default(1)
+  followUpAfterMinutes Int   @default(0)
 
   isActive        Boolean  @default(true)
   sortOrder       Int      @default(0)
@@ -156,10 +158,12 @@ model MessageQueue {
   lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
 
   templateId      String?
+  template        MessageTemplate? @relation(fields: [templateId], references: [id], onDelete: SetNull)
+
   channel         String   @default("whatsapp")
   content         String   @db.Text
 
-  status          String   @default("queued") // queued | sending | sent | failed | skipped
+  status          String   @default("queued")
   scheduledAt     DateTime
   sentAt          DateTime?
 
@@ -178,6 +182,7 @@ model MessageQueue {
 
 model WhatsAppInboundMessage {
   id            String   @id @default(cuid())
+
   marketplaceId String
   marketplace   Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
 
@@ -185,7 +190,6 @@ model WhatsAppInboundMessage {
   body          String   @db.Text
   receivedAt    DateTime @default(now())
 
-  // optional match
   leadId        String?
   lead          Lead?    @relation(fields: [leadId], references: [id], onDelete: SetNull)
 
