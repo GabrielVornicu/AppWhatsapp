@@ -11,114 +11,57 @@ function makeAuthHeader(username, appPassword) {
 }
 
 /**
- * ✅ Fetch post types (include CPT-uri) expuse in REST
- * Robust version:
- *  1) încearcă /wp/v2/types
- *  2) fallback pe /wp-json (routes index)
+ * ✅ Fetch REAL WordPress Post Types (CPT-uri curate)
+ * Folosește doar /wp/v2/types
+ * Filtrează:
+ *  - public === true
+ *  - show_in_rest === true
+ *  - exclude attachment
  */
 async function fetchPostTypes(siteUrl, username, appPassword) {
   const cleanUrl = normalizeUrl(siteUrl);
-  const authHeader = makeAuthHeader(username, appPassword);
 
-  // ==============================
-  // 1️⃣ Încercăm /wp/v2/types
-  // ==============================
-  try {
-    const response = await fetch(`${cleanUrl}/wp-json/wp/v2/types`, {
-      headers: { Authorization: authHeader },
-    });
+  const response = await fetch(`${cleanUrl}/wp-json/wp/v2/types`, {
+    headers: {
+      Authorization: makeAuthHeader(username, appPassword),
+    },
+  });
 
-    if (response.ok) {
-      const data = await response.json();
-
-      // IMPORTANT: folosim entries ca să păstrăm cheia reală (ex: "camin")
-      const types = Object.entries(data || {})
-        .filter(([, t]) => t && t.show_in_rest)
-        .map(([key, t]) => ({
-          key,
-          name: t.name || key,
-          rest_base: t.rest_base || key,
-        }))
-        .sort((a, b) => a.rest_base.localeCompare(b.rest_base));
-
-      if (types.length) {
-        return types;
-      }
-    } else {
-      const text = await response.text();
-      console.error("WP TYPES ERROR:", response.status, text);
-    }
-  } catch (err) {
-    console.error("WP TYPES FETCH FAIL:", err);
-  }
-
-  // ==============================
-  // 2️⃣ Fallback: parse REST index
-  // ==============================
-  try {
-    const indexRes = await fetch(`${cleanUrl}/wp-json`, {
-      headers: { Authorization: authHeader },
-    });
-
-    if (!indexRes.ok) {
-      const text = await indexRes.text();
-      console.error("WP INDEX ERROR:", indexRes.status, text);
-      return [];
-    }
-
-    const indexData = await indexRes.json();
-    const routes = indexData?.routes || {};
-
-    const excluded = new Set([
-      "posts",
-      "pages",
-      "media",
-      "types",
-      "statuses",
-      "taxonomies",
-      "tags",
-      "categories",
-      "users",
-      "comments",
-      "settings",
-      "themes",
-      "plugins",
-      "blocks",
-      "block-renderer",
-      "search",
-    ]);
-
-    const found = new Map();
-
-    for (const route of Object.keys(routes)) {
-      // vrem exact ruta de listare, ex: /wp/v2/camin
-      const match = route.match(/^\/wp\/v2\/([^\/\(\?]+)$/);
-      if (!match) continue;
-
-      const restBase = match[1];
-      if (!restBase || excluded.has(restBase)) continue;
-
-      const methods = routes[route]?.methods || [];
-      if (!methods.includes("GET")) continue;
-
-      found.set(restBase, {
-        key: restBase,
-        name: restBase,
-        rest_base: restBase,
-      });
-    }
-
-    return Array.from(found.values()).sort((a, b) =>
-      a.rest_base.localeCompare(b.rest_base)
-    );
-  } catch (err) {
-    console.error("WP INDEX FALLBACK ERROR:", err);
+  if (!response.ok) {
+    const text = await response.text();
+    console.error("WP TYPES ERROR:", response.status, text);
     return [];
   }
+
+  const data = await response.json();
+
+  const types = Object.entries(data || {})
+    .filter(([key, t]) => {
+      if (!t) return false;
+
+      // trebuie sa fie public
+      if (!t.public) return false;
+
+      // trebuie sa fie expus in REST
+      if (!t.show_in_rest) return false;
+
+      // excludem attachment (media)
+      if (key === "attachment") return false;
+
+      return true;
+    })
+    .map(([key, t]) => ({
+      key,
+      name: t.name || key,
+      rest_base: t.rest_base || key,
+    }))
+    .sort((a, b) => a.rest_base.localeCompare(b.rest_base));
+
+  return types;
 }
 
 /**
- * ✅ Fetch posts for a selected type (posts or CPT rest_base)
+ * ✅ Fetch posts for selected post type
  */
 async function fetchPosts(
   siteUrl,
@@ -157,6 +100,9 @@ async function fetchPosts(
   return { items, total, totalPages };
 }
 
+/**
+ * ✅ Test connection
+ */
 async function testConnection(siteUrl, username, appPassword) {
   const cleanUrl = normalizeUrl(siteUrl);
 
