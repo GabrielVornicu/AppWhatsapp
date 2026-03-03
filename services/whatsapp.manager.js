@@ -1,5 +1,6 @@
 const path = require("path");
 const qrcode = require("qrcode");
+const puppeteer = require("puppeteer");
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const { PrismaClient } = require("@prisma/client");
 
@@ -9,8 +10,6 @@ const prisma = new PrismaClient();
 const sessions = new Map();
 
 function normalizeE164(phone) {
-  // aici o să păstrăm simplu: scoate spații, +, etc.
-  // IMPORTANT: whatsapp-web.js vrea numărul fără + în format: 40xxxxxxxxx
   return String(phone || "").replace(/[^\d]/g, "");
 }
 
@@ -31,6 +30,7 @@ async function ensureClient(marketplaceId) {
     }),
     puppeteer: {
       headless: true,
+      executablePath: puppeteer.executablePath(),
       args: [
         "--no-sandbox",
         "--disable-setuid-sandbox",
@@ -84,15 +84,12 @@ async function ensureClient(marketplaceId) {
     });
   });
 
-  // incoming messages -> salvează + update lead (reply + stop)
   client.on("message", async (message) => {
     try {
       const from = message.from || "";
-      // from arată gen: 407xxxxxxxx@c.us
       const fromPhone = from.split("@")[0] || "";
       const body = message.body || "";
 
-      // save inbound
       const inbound = await prisma.whatsAppInboundMessage.create({
         data: {
           marketplaceId,
@@ -101,7 +98,6 @@ async function ensureClient(marketplaceId) {
         },
       });
 
-      // match lead by phone
       const lead = await prisma.lead.findFirst({
         where: { marketplaceId, phone: fromPhone },
       });
@@ -127,7 +123,6 @@ async function ensureClient(marketplaceId) {
         }
       }
     } catch (e) {
-      // nu aruncăm, ca să nu crape worker-ul
       console.error("WA inbound error:", e);
     }
   });
