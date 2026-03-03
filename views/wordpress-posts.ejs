@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>WordPress Posts</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">AppWhatsapp</div>
+    <nav class="nav">
+      <a class="nav__link" href="/dashboard">Dashboard</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div>
+        <h1><%= marketplace.name %></h1>
+        <div class="muted">WordPress Posts</div>
+      </div>
+      <a class="btn btn--primary" href="/dashboard">← Back</a>
+    </div>
+
+    <% if (!posts.length) { %>
+      <div class="card">
+        <h2>No posts found</h2>
+      </div>
+    <% } else { %>
+
+      <div class="grid">
+        <% posts.forEach(post => { %>
+
+          <div class="card">
+            <div class="card__head">
+              <div class="title">
+                <%- post.title.rendered %>
+              </div>
+
+              <span class="badge 
+                <%= post.status === 'publish' ? 'badge--ok' : 'badge--unk' %>">
+                <%= post.status %>
+              </span>
+            </div>
+
+            <div class="card__body">
+              <div class="row">
+                <span class="muted small">Date</span>
+                <span class="small">
+                  <%= new Date(post.date).toLocaleString() %>
+                </span>
+              </div>
+
+              <div class="row">
+                <span class="muted small">Slug</span>
+                <span class="small"><%= post.slug %></span>
+              </div>
+            </div>
+
+            <div class="card__foot">
+              <a class="btn btn--ghost small" 
+                 href="<%= post.link %>" target="_blank">
+                 View
+              </a>
+            </div>
+
+          </div>
+
+        <% }) %>
+      </div>
+
+    <% } %>
+
+  </main>
+</div>
+
+</body>
+</html>
