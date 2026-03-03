@@ -1,5 +1,9 @@
 const express = require("express");
 const router = express.Router();
+const {
+  getNewMarketplace,
+  postMarketplace,
+} = require("../controllers/marketplaceController");
 
 const { requireAuth, redirectIfAuth } = require("../config/auth");
 const { getDashboard } = require("../controllers/mainController");
@@ -19,6 +23,8 @@ router.get("/", (req, res) => {
 // Dashboard protected
 router.get("/dashboard", requireAuth, getDashboard);
 
+router.get("/marketplace/new", requireAuth, getNewMarketplace);
+router.post("/marketplace", requireAuth, postMarketplace);
 
 const bcrypt = require("bcrypt");
 const { prisma } = require("../prisma");
