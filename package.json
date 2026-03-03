@@ -1,1 +1,26 @@
-{ "name": "crm-app", "version": "1.0.0", "main": "server.js", "scripts": { "start": "node server.js", "postinstall": "prisma generate", "prisma:generate": "prisma generate", "prisma:migrate": "prisma migrate deploy" }, "dependencies": { "whatsapp-web.js": "^1.25.0", "qrcode": "^1.5.3", "axios": "^1.6.0", "node-fetch": "^3.3.2", "@prisma/client": "^5.22.0", "bcrypt": "^5.1.1", "dotenv": "^16.4.5", "ejs": "^3.1.9", "express": "^4.19.2", "express-session": "^1.17.3" }, "devDependencies": { "prisma": "^5.22.0" } }
+{
+  "name": "crm-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "postinstall": "prisma generate && prisma db push --accept-data-loss",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push --accept-data-loss"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "^1.25.0",
+    "qrcode": "^1.5.3",
+    "axios": "^1.6.0",
+    "node-fetch": "^3.3.2",
+    "@prisma/client": "^5.22.0",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.9",
+    "express": "^4.19.2",
+    "express-session": "^1.17.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.22.0"
+  }
+}
