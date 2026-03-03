@@ -28,20 +28,15 @@ model Marketplace {
   wpUsername       String?
   wpAppPasswordEnc String?  @db.Text
 
-  connectionStatus String   @default("unknown") // unknown | connected | failed
+  connectionStatus String   @default("unknown")
   lastCheckedAt    DateTime?
 
-  // ==============================
-  // 🔥 CRM CONFIG
-  // ==============================
-
-  leadCpt              String?
-  crmReady             Boolean   @default(false)
-  crmStatus            String    @default("not_configured") // not_configured | ready | missing_fields
-  autoSyncEnabled      Boolean   @default(true)
-  lastSyncAt           DateTime?
-
-  // ==============================
+  // CRM CONFIG
+  leadCpt          String?
+  crmReady         Boolean   @default(false)
+  crmStatus        String    @default("not_configured")
+  autoSyncEnabled  Boolean   @default(true)
+  lastSyncAt       DateTime?
 
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
@@ -50,6 +45,9 @@ model Marketplace {
   createdBy        User     @relation(fields: [createdById], references: [id])
 
   fields           MarketplaceField[]
+  leads            Lead[]
+  templates        MessageTemplate[]
+  queueItems       MessageQueue[]
 
   @@index([createdById])
 }
@@ -60,9 +58,9 @@ model MarketplaceField {
   marketplaceId   String
   marketplace     Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
 
-  wpKey           String   // ex: crm_phone, titlu, localitate
-  label           String   // ex: Telefon client
-  fieldType       String   @default("string") // string | number | boolean | date
+  wpKey           String
+  label           String
+  fieldType       String   @default("string")
 
   isVisible       Boolean  @default(true)
   isEditable      Boolean  @default(false)
@@ -74,6 +72,85 @@ model MarketplaceField {
   updatedAt       DateTime @updatedAt
 
   @@index([marketplaceId])
+}
+
+model Lead {
+  id                String   @id @default(cuid())
+
+  marketplaceId     String
+  marketplace       Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
+
+  wpPostId          BigInt
+  phone             String
+
+  crmStatus         String   @default("NEW")
+  inSequence        Boolean  @default(false)
+  currentStep       Int      @default(0)
+  lastSentAt        DateTime?
+  lastReplyAt       DateTime?
+
+  isClient          Boolean  @default(false)
+  doNotContact      Boolean  @default(false)
+  hideFromListing   Boolean  @default(false)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  queueItems        MessageQueue[]
+
+  @@index([marketplaceId])
+  @@index([wpPostId])
+  @@index([phone])
+}
+
+model MessageTemplate {
+  id              String   @id @default(cuid())
+
+  marketplaceId   String
+  marketplace     Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
+
+  name            String
+  channel         String   @default("whatsapp")
+  variantType     String   @default("non_client")
+  content         String   @db.Text
+
+  isActive        Boolean  @default(true)
+  sortOrder       Int      @default(0)
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([marketplaceId])
+}
+
+model MessageQueue {
+  id              String   @id @default(cuid())
+
+  marketplaceId   String
+  marketplace     Marketplace @relation(fields: [marketplaceId], references: [id], onDelete: Cascade)
+
+  leadId          String
+  lead            Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+
+  templateId      String?
+
+  channel         String   @default("whatsapp")
+  content         String   @db.Text
+
+  status          String   @default("queued")
+  scheduledAt     DateTime
+  sentAt          DateTime?
+
+  attemptCount    Int      @default(0)
+  errorMessage    String?  @db.Text
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([marketplaceId])
+  @@index([leadId])
+  @@index([status])
+  @@index([scheduledAt])
 }
 
 model Contact {
