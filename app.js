@@ -4,7 +4,7 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 
-// 🔹 INIT APP PRIMA DATĂ (OBLIGATORIU)
+// 🔹 INIT APP PRIMA DATĂ
 const app = express();
 
 // 🔹 BODY PARSERS
@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// 🔹 SESSIONS (MVP)
+// 🔹 SESSIONS
 app.use(
   session({
     name: "appwhatsapp.sid",
@@ -28,7 +28,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 zile
+      maxAge: 1000 * 60 * 60 * 24 * 7,
     },
   })
 );
