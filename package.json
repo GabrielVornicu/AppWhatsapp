@@ -9,6 +9,8 @@
     "prisma:migrate": "prisma migrate deploy"
   },
   "dependencies": {
+    "whatsapp-web.js": "^1.25.0",
+    "qrcode": "^1.5.3",
     "axios": "^1.6.0",
     "node-fetch": "^3.3.2",
     "@prisma/client": "^5.22.0",
